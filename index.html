@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Travel Management & Accounting System V6.0 Clean Deployment</title>
+<title>澳洲旅遊訂單、司機名冊與出車系統 V6.0.1</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -36,16 +36,14 @@
   @media (max-width: 1279px) {
     #rightPanel-orders table { min-width: 900px; }
   }
-  .feature-agent-costs-off .agent-cost-block { display:none !important; }
 </style>
-<script src="config.js"></script>
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen">
 <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900 p-4" id="loginScreen">
 <div class="w-full max-w-sm rounded-2xl bg-white p-7 shadow-2xl">
 <div class="text-center mb-6">
-<div class="text-4xl">✈️</div>
-<h1 class="text-2xl font-black mt-2">旅遊訂單與會計系統</h1>
+<div class="text-4xl">🇦🇺</div>
+<h1 class="text-2xl font-black mt-2" id="loginSystemTitle">旅遊訂單與會計系統</h1>
 <p class="text-xs text-slate-500 mt-1">訂單、司機名冊、出車單與AUD會計報表分流管理</p>
 </div>
 <div class="space-y-4">
@@ -63,8 +61,11 @@
 <header class="no-print sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
 <div class="mx-auto flex max-w-[1800px] flex-wrap items-center justify-between gap-3 px-4 py-3">
 <div>
-<h1 class="text-xl font-black">Travel Management & Accounting System V6.0 Clean Deployment</h1>
-<p class="text-xs font-bold text-emerald-600" id="statusText">登入中...</p><p class="text-[10px] font-bold text-blue-600">V6.0 Clean Deployment｜獨立 Supabase／GitHub Pages</p>
+<div class="flex flex-wrap items-center gap-2">
+<h1 class="text-xl font-black" id="mainSystemTitle">澳洲旅遊訂單、司機名冊與出車系統 V6.0.1</h1>
+<button class="no-print rounded-lg bg-slate-100 px-2 py-1 text-[11px] font-bold text-slate-600 hover:bg-slate-200" id="editCompanyNameBtn" type="button" title="自訂左上角顯示公司名稱">✎ 公司名稱</button>
+</div>
+<p class="text-xs font-bold text-emerald-600" id="statusText">登入中...</p><p class="text-[10px] font-bold text-blue-600" id="versionText">Core V6.0.1｜DB 檢查中</p>
 </div>
 <div class="flex flex-wrap items-center gap-2">
 
@@ -108,7 +109,7 @@
 <div><label class="field-label">經營模式</label><select class="field" id="mode"><option value="Mode_A">自營接單</option><option value="Mode_B">轉給同業</option><option value="Mode_C">同業轉入</option><option value="Mode_D">門票／飯店</option></select></div>
 <div><label class="field-label">系統訂單編號</label><input class="field readonly" id="orderNumber" readonly="" value="儲存時自動產生"/></div>
 <div><label class="field-label">外部單號</label><input class="field" id="externalOrderNumber" placeholder="代理或平台單號"/></div>
-<div><label class="field-label">代理／來源</label><input class="field" id="agentName" placeholder="例：合作代理、平台或同業來源"/></div>
+<div><label class="field-label">代理／來源</label><input class="field" id="agentName" placeholder="GDT、Kyra、Gold Ocean Tour"/></div>
 <div class="col-span-2"><label class="field-label">旅客姓名</label><input class="field" id="customer" required=""/></div>
 <div><label class="field-label">接單日期</label><input class="field" id="orderDate" required="" type="date"/></div>
 <div><label class="field-label">旅客總人數</label><input class="field" id="pax" min="1" required="" type="number" value="1"/></div>
@@ -129,7 +130,7 @@
 <summary class="section-title"><span>③ AUD售價、會計匯率與401</span><span class="text-xs text-slate-400">訂單本位固定AUD</span></summary>
 <div class="mt-3 grid grid-cols-2 gap-3">
 <div><label class="field-label">訂單幣別</label><input class="field readonly" id="currency" readonly="" value="AUD"/></div>
-<div><label class="field-label">會計匯率（TWD／AUD）</label><input class="field" id="fxRate" step="0.0001" type="number" value=""/></div>
+<div><label class="field-label">會計匯率（TWD／AUD）</label><input class="field" id="fxRate" step="0.0001" type="number" value="23"/></div>
 <div><label class="field-label">行程原價合計 AUD</label><input class="field readonly" id="grossOrderAmount" readonly="" step="0.01" type="number"/></div>
 <div><label class="field-label">訂單折扣 AUD</label><input class="field" id="discountAud" min="0" step="0.01" type="number" value="0"/></div>
 <div><label class="field-label">系統折扣後總額 AUD</label><input class="field readonly" id="systemNetAmount" readonly="" step="0.01" type="number"/></div>
@@ -318,7 +319,7 @@
 <p class="mb-4 text-xs text-slate-500">只有第一位管理員可建立後續帳號；新帳號建立後可直接登入。</p>
 <form class="space-y-3" id="userCreateForm">
 <div><label class="field-label">Email</label><input class="field" id="newUserEmail" required type="email" autocomplete="off"/></div>
-<div><label class="field-label">初始密碼</label><input class="field" id="newUserPassword" required minlength="8" type="password" autocomplete="new-password"/></div>
+<div><label class="field-label">初始密碼</label><input class="field" id="newUserPassword" required minlength="6" type="password" autocomplete="new-password"/></div>
 <div><label class="field-label">角色</label><select class="field" id="newUserRole"><option value="user">一般使用者</option><option value="accounting">會計</option><option value="viewer">唯讀</option><option value="admin">管理員</option></select></div>
 <button class="w-full rounded-xl bg-blue-600 py-3 font-black text-white hover:bg-blue-700" id="createUserBtn" type="submit">建立帳號</button>
 <p class="hidden rounded-lg p-3 text-sm font-bold" id="userCreateMessage"></p>
@@ -377,9 +378,6 @@
 <div><label class="field-label">帳戶／科目</label><input class="field" id="financeAccount" placeholder="現金、銀行、設備、借款"/></div>
 <div><label class="field-label">對象</label><input class="field" id="financeCounterparty"/></div>
 <div><label class="field-label">憑證號碼</label><input class="field" id="financeDocument"/></div>
-<div><label class="field-label">進項稅務分類</label><select class="field" id="financeTaxType"><option value="unclassified">未分類</option><option value="deductible">可扣抵進項</option><option value="nondeductible">不可扣抵</option><option value="zero">零稅率</option><option value="exempt">免稅</option><option value="out_of_scope">非營業稅範圍</option></select></div>
-<div><label class="field-label">未稅金額 TWD</label><input class="field" id="financeExTaxTwd" min="0" step="0.01" type="number" value="0"/></div>
-<div><label class="field-label">進項稅額 TWD</label><input class="field" id="financeTaxTwd" min="0" step="0.01" type="number" value="0"/></div>
 <div class="col-span-2"><label class="field-label">備註</label><textarea class="field" id="financeNote" rows="3"></textarea></div>
 </div>
 <div class="rounded-lg bg-slate-50 p-3 text-xs font-bold text-slate-600" id="financeMapping"></div>
@@ -397,31 +395,26 @@
 </main>
 </div>
 
+<script src="./config.js"></script>
 <script>
-const APP_CONFIG = window.TRAVEL_CONFIG || {};
+const APP_VERSION = '6.0.1';
+const CORE_API_VERSION = '6.0';
+const APP_CONFIG = window.APP_CONFIG || {};
 const SUPABASE_URL = String(APP_CONFIG.supabaseUrl || '').replace(/\/$/, '');
-const SUPABASE_KEY = String(APP_CONFIG.supabasePublishableKey || APP_CONFIG.supabaseAnonKey || '');
-const DEFAULT_ACCOUNTING_FX = Math.max(0.0001, Number(APP_CONFIG.defaultAccountingFxTwdPerAud || 23));
-const AUTH_STORAGE_KEY = "travel_v6_auth_session";
-const EMAIL_STORAGE_KEY = "travelV6Email";
-function configIsReady(){ return /^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(SUPABASE_URL) && SUPABASE_KEY && !/REPLACE_ME|YOUR_PROJECT_REF/i.test(SUPABASE_URL+SUPABASE_KEY); }
-function applyBrandingAndFeatures(){
-  const systemName=APP_CONFIG.systemName || 'Travel Management & Accounting System V6.0 Clean Deployment';
-  const companyName=APP_CONFIG.companyName || '';
-  document.title=`${companyName?companyName+'｜':''}${systemName}`;
-  const loginTitle=document.querySelector('#loginScreen h1'); if(loginTitle)loginTitle.textContent=companyName||'旅遊訂單與會計系統';
-  const appTitle=document.querySelector('#app header h1'); if(appTitle)appTitle.textContent=systemName;
-  const logoEl=document.querySelector('#loginScreen .text-4xl');
-  if(logoEl){ const logo=String(APP_CONFIG.logo||'✈️'); logoEl.innerHTML=/^https?:\/\//i.test(logo)?`<img src="${esc(logo)}" alt="Logo" class="mx-auto h-14 max-w-[180px] object-contain">`:esc(logo); }
-  const loginSub=document.querySelector('#loginScreen h1 + p');
-  if(loginSub){ const contact=[APP_CONFIG.companyEmail,APP_CONFIG.companyPhone].filter(Boolean).join('｜'); loginSub.textContent=contact?`${systemName}｜${contact}`:systemName; }
-  document.body.classList.toggle('feature-agent-costs-off',APP_CONFIG.enableAgentCosts===false);
-  document.querySelectorAll('[data-tab="tourcosts"]').forEach(el=>el.classList.toggle('hidden',APP_CONFIG.enableAgentCosts===false));
-  document.querySelectorAll('[data-tab="drivers"],[data-tab="dispatch"]').forEach(el=>el.classList.toggle('hidden',APP_CONFIG.enableDrivers===false));
-  if($('fxRate'))$('fxRate').value=DEFAULT_ACCOUNTING_FX;
-  if(!configIsReady()){ const hint=$('registerHint'); if(hint)hint.textContent='請先完成 config.js 的新 Supabase Project URL 與 publishable key 設定。'; }
+const SUPABASE_KEY = String(APP_CONFIG.supabaseAnonKey || '');
+const INSTANCE_ID = String(APP_CONFIG.instanceId || '').trim();
+if (!SUPABASE_URL || !SUPABASE_KEY || !INSTANCE_ID) {
+  document.body.innerHTML = '<div style="padding:24px;font-family:sans-serif"><h2>系統設定不完整</h2><p>請先設定 config.js 的 instanceId、supabaseUrl 與 supabaseAnonKey。</p></div>';
+  throw new Error('APP_CONFIG_INCOMPLETE');
 }
-
+const AUTH_STORAGE_KEY = `travel_auth_${INSTANCE_ID}`;
+const EMAIL_STORAGE_KEY = `travel_email_${INSTANCE_ID}`;
+const LEGACY_AUTH_STORAGE_KEY = String(APP_CONFIG.legacyAuthStorageKey || '');
+if (!localStorage.getItem(AUTH_STORAGE_KEY) && LEGACY_AUTH_STORAGE_KEY && localStorage.getItem(LEGACY_AUTH_STORAGE_KEY)) {
+  localStorage.setItem(AUTH_STORAGE_KEY, localStorage.getItem(LEGACY_AUTH_STORAGE_KEY));
+  localStorage.removeItem(LEGACY_AUTH_STORAGE_KEY);
+}
+const FEATURES = {orders:true,tourCosts:true,drivers:true,dispatch:true,reports:true,finance:true,userManagement:true,...(APP_CONFIG.features||{})};
 const authListeners = new Set();
 const emitAuth = (event, session) => authListeners.forEach(fn => { try { fn(event, session); } catch (e) { console.error(e); } });
 const parseAuthError = async res => { const data = await res.json().catch(()=>({})); const err = new Error(data?.msg || data?.message || data?.error_description || data?.error || `HTTP ${res.status}`); err.status=res.status; return err; };
@@ -470,6 +463,7 @@ const supabase = { auth: {
   onAuthStateChange(fn){ authListeners.add(fn); queueMicrotask(()=>fn('INITIAL_SESSION',readSession())); return {data:{subscription:{unsubscribe:()=>authListeners.delete(fn)}}}; },
   async getSession(){ let session=readSession(); if(session?.expires_at && session.expires_at<=Math.floor(Date.now()/1000)+30) session=await refreshStoredSession(session); return {data:{session},error:null}; },
   async signInWithPassword({email,password}){ try { latestAuthIssuedAt=Date.now(); const res=await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`,{method:'POST',headers:{apikey:SUPABASE_KEY,'Content-Type':'application/json'},body:JSON.stringify({email,password})}); if(!res.ok) throw await parseAuthError(res); const data=await res.json(); const session={...data,expires_at:Math.floor(Date.now()/1000)+Number(data.expires_in||3600)}; saveSession(session); emitAuth('SIGNED_IN',session); return {data:{session,user:session.user},error:null}; } catch(error){ return {data:{session:null,user:null},error}; } },
+  async signUp({email,password}){ try { const res=await fetch(`${SUPABASE_URL}/auth/v1/signup`,{method:'POST',headers:{apikey:SUPABASE_KEY,'Content-Type':'application/json'},body:JSON.stringify({email,password})}); if(!res.ok) throw await parseAuthError(res); const data=await res.json(); const session=data.access_token?{...data,expires_at:Math.floor(Date.now()/1000)+Number(data.expires_in||3600)}:null; if(session){saveSession(session);emitAuth('SIGNED_IN',session);} return {data:{session,user:data.user||session?.user||null},error:null}; } catch(error){ return {data:{session:null,user:null},error}; } },
   async signOut(){ const session=readSession(); try { if(session?.access_token) await fetch(`${SUPABASE_URL}/auth/v1/logout`,{method:'POST',headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${session.access_token}`}}); } catch{} saveSession(null); emitAuth('SIGNED_OUT',null); return {error:null}; }
 }};
 
@@ -492,7 +486,7 @@ let dispatchLinks = [];
 let orderItems = [];
 let selectedDispatchItemIds = new Set();
 let activeCategory = 'all';
-let activeReport = APP_CONFIG.enable401===false ? 'receipts' : '401';
+let activeReport = '401';
 let currentReportRows = [];
 let authSequence = 0;
 let sessionTimer = null;
@@ -502,6 +496,48 @@ let latestAuthIssuedAt = 0;
 let accountingAmountManual = false;
 
 const $ = id => document.getElementById(id);
+const defaultCompanyName = String(APP_CONFIG.companyName || '旅遊管理系統').trim() || '旅遊管理系統';
+const systemName = String(APP_CONFIG.systemName || '旅遊訂單、司機名冊與出車系統');
+const COMPANY_NAME_STORAGE_KEY = `travel_display_company_${INSTANCE_ID}`;
+function displayCompanyName(){
+  return (localStorage.getItem(COMPANY_NAME_STORAGE_KEY)||'').trim() || defaultCompanyName;
+}
+function renderBranding(){
+  const companyName=displayCompanyName();
+  document.title = `${companyName}｜${systemName} V${APP_VERSION}`;
+  if($('loginSystemTitle')) $('loginSystemTitle').textContent = `${companyName}｜旅遊訂單與會計系統`;
+  if($('mainSystemTitle')) $('mainSystemTitle').textContent = `${companyName}｜${systemName} V${APP_VERSION}`;
+}
+function applyAppConfig(){
+  renderBranding();
+  const map={tourcosts:'tourCosts',drivers:'drivers',dispatch:'dispatch',reports:'reports',finance:'finance',users:'userManagement'};
+  document.querySelectorAll('.mainTab').forEach(btn=>{const key=map[btn.dataset.tab];if(key && FEATURES[key]===false) btn.classList.add('hidden');});
+}
+function editDisplayCompanyName(){
+  const current=displayCompanyName();
+  const value=prompt('請輸入左上角要顯示的公司名稱：\n\n留空後按確定，可恢復 config.js 的預設名稱。',current);
+  if(value===null) return;
+  const name=value.trim();
+  if(name) localStorage.setItem(COMPANY_NAME_STORAGE_KEY,name);
+  else localStorage.removeItem(COMPANY_NAME_STORAGE_KEY);
+  renderBranding();
+}
+$('editCompanyNameBtn')?.addEventListener('click',editDisplayCompanyName);
+function versionParts(v){return String(v||'').split('.').map(x=>Number(x)||0);}
+function isSchemaCompatible(dbVersion){
+  const [a,b]=versionParts(dbVersion), [ea,eb]=versionParts(APP_VERSION);
+  return a===ea && b>=eb;
+}
+async function checkSchemaVersion(){
+  let info;
+  try{ info=await api('/rest/v1/rpc/get_app_schema_version',{method:'POST',body:'{}'}); }
+  catch(e){ throw new Error(`資料庫尚未升級為共用核心版本：${e.message}`); }
+  const dbVersion=info?.version||'';
+  if(!isSchemaCompatible(dbVersion)) throw new Error(`程式版本 V${APP_VERSION} 與資料庫版本 V${dbVersion||'未知'} 不相容，請先執行對應Migration。`);
+  if($('versionText')) $('versionText').textContent=`Core V${APP_VERSION}｜DB V${dbVersion}｜API ${info?.coreApiVersion||CORE_API_VERSION}`;
+  return info;
+}
+applyAppConfig();
 const num = v => Number(v || 0);
 const round2 = v => Math.round((num(v) + Number.EPSILON) * 100) / 100;
 const money = v => `A$${round2(v).toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
@@ -528,7 +564,6 @@ async function publicApi(path, options={}) {
 }
 
 async function refreshBootstrapStatus() {
-  if(!configIsReady()){ canCreateFirstUser=false; $('registerBtn').classList.add('hidden'); $('registerHint').textContent='請先完成 config.js 的新 Supabase Project URL 與 publishable key 設定。'; return; }
   try {
     const status = await publicApi('/rest/v1/rpc/bootstrap_status', { method:'POST', body:'{}' });
     canCreateFirstUser = !!status?.canCreateFirstUser;
@@ -599,12 +634,12 @@ async function handleSession(session) {
     showLogin('此帳號尚未啟用，請聯絡管理員。');
     return;
   }
+  await checkSchemaVersion();
   $('loginScreen').classList.add('hidden');
   $('app').classList.remove('hidden');
   currentRole = status.role || '';
   $('statusText').textContent = `已登入：${session.user.email}（${status.role}）`;
-  $('adminUsersTab').classList.toggle('hidden', currentRole !== 'admin');
-  document.querySelectorAll('[data-tab="finance"]').forEach(el=>el.classList.toggle('hidden',!['admin','accounting'].includes(currentRole)));
+  $('adminUsersTab').classList.toggle('hidden', currentRole !== 'admin' || FEATURES.userManagement===false);
   await loadAll();
 }
 
@@ -637,7 +672,6 @@ supabase.auth.onAuthStateChange((event,session)=>{
 });
 
 $('loginBtn').addEventListener('click', async()=>{
-  if(!configIsReady()) return showLogin('請先完成 config.js 的新 Supabase Project URL 與 publishable key 設定。');
   const email = $('loginEmail').value.trim(), password = $('loginPassword').value;
   if (!email || !password) return showLogin('請輸入帳號與密碼。');
   const btn = $('loginBtn'); btn.disabled=true; btn.textContent='登入中...';
@@ -655,9 +689,7 @@ $('loginBtn').addEventListener('click', async()=>{
 
 
 // 背景初始化，不使用頂層 await，避免登入頁卡死。
-applyBrandingAndFeatures();
 (async()=>{
-  if(!configIsReady()){ showLogin('請先完成 config.js 的新 Supabase Project URL 與 publishable key 設定。'); return; }
   try { await refreshBootstrapStatus(); }
   catch (e) { console.error('bootstrap status failed', e); }
   try {
@@ -677,28 +709,15 @@ window.addEventListener('error', e=>{
 });
 window.addEventListener('unhandledrejection', e=>console.error('Unhandled promise rejection',e.reason));
 
-async function bootstrapAdminApi(email,password){
-  if(!configIsReady()) throw new Error('請先完成 config.js 的新 Supabase 設定。');
-  const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),20000);
-  try{
-    const res=await fetch(`${SUPABASE_URL}/functions/v1/bootstrap-admin`,{method:'POST',headers:{apikey:SUPABASE_KEY,'Content-Type':'application/json'},body:JSON.stringify({email,password}),signal:controller.signal});
-    const text=await res.text();let data={};if(text){try{data=JSON.parse(text);}catch{data={error:text};}}
-    if(!res.ok||data?.error)throw new Error(data?.error||`HTTP ${res.status}`);
-    return data;
-  }catch(e){if(e?.name==='AbortError')throw new Error('建立管理員連線逾時。');throw e;}finally{clearTimeout(timer);}
-}
-
 $('registerBtn').addEventListener('click', async()=>{
   if (!canCreateFirstUser) return showLogin('公開註冊已關閉，請由管理員建立帳號。');
   const email=$('loginEmail').value.trim(), password=$('loginPassword').value;
-  if (!email || password.length<8) return showLogin('請輸入有效Email，密碼至少8碼。');
+  if (!email || password.length<6) return showLogin('請輸入有效Email，密碼至少6碼。');
   const btn=$('registerBtn'); btn.disabled=true; btn.textContent='建立中...';
   try {
-    await bootstrapAdminApi(email,password);
-    const {data,error}=await withTimeout(supabase.auth.signInWithPassword({email,password}),15000,'登入');
-    if(error)throw error;
-    if($('rememberMe').checked)localStorage.setItem(EMAIL_STORAGE_KEY,email);
-    scheduleSession(data.session,0);
+    const {data,error}=await withTimeout(supabase.auth.signUp({email,password}),15000,'建立帳號');
+    if(error) throw error;
+    showLogin(data.session ? '帳號已建立。' : '帳號已建立，請先到信箱完成驗證。');
   } catch(e){ showLogin(`建立失敗：${e.message}`); }
   finally { btn.disabled=false; btn.textContent='建立第一位管理員帳號'; await refreshBootstrapStatus(); }
 });
@@ -826,7 +845,7 @@ function renderManagedUsers(){
 }
 $('userCreateForm').addEventListener('submit',async e=>{
   e.preventDefault();
-  const email=$('newUserEmail').value.trim(),password=$('newUserPassword').value,role=$('newUserRole').value;if(password.length<8)return alert('初始密碼至少8碼。');
+  const email=$('newUserEmail').value.trim(),password=$('newUserPassword').value,role=$('newUserRole').value;
   const btn=$('createUserBtn'),msg=$('userCreateMessage');
   btn.disabled=true;btn.textContent='建立中…';msg.classList.add('hidden');
   try{
@@ -874,7 +893,7 @@ function receiptPrepaymentAud(o,end='9999-12-31'){const first=firstServiceDate(o
 function receiptCurrencySummary(orderId){const groups={};receiptsForOrder(orderId).forEach(r=>groups[r.currency]=(groups[r.currency]||0)+num(r.amount_foreign));return Object.entries(groups).map(([c,v])=>`${c} ${round2(v).toLocaleString()}`).join('＋');}
 function accountingOrderAmount(o){return num(o.accounting_amount_aud||o.amount);}
 function arAud(o){ return Math.max(0,accountingOrderAmount(o)-receivedAud(o)-receiptDiscountAud(o)-orderRefundAud(o)); }
-function financeAud(e){ const direct=num(e.amount_aud); return direct || round2(num(e.amount_twd)/Math.max(.0001,num(e.fx_twd_per_aud)||DEFAULT_ACCOUNTING_FX)); }
+function financeAud(e){ const direct=num(e.amount_aud); return direct || round2(num(e.amount_twd)/Math.max(.0001,num(e.fx_twd_per_aud)||23)); }
 function dispatchesForOrder(orderId){
   const itemIds=new Set(orderItemsFor(orderId).map(i=>i.id));
   const ids=new Set(dispatchLinks.filter(l=>itemIds.has(l.order_item_id)).map(l=>l.dispatch_id));
@@ -1048,11 +1067,11 @@ function renderOrderItems(){
       <div><label class="field-label">時間</label><input data-item-field="service_time" type="time" class="field" value="${esc(i.service_time)}"></div>
       <div><label class="field-label">分類</label><select data-item-field="category" class="field">${['接送機','一日遊','多日遊','包車','門票','飯店販售'].map(c=>`<option ${c===i.category?'selected':''}>${c}</option>`).join('')}</select></div>
       <div><label class="field-label">人數</label><input data-item-field="pax" type="number" min="1" class="field" value="${num(i.pax)}"></div>
-      <div class="col-span-2 md:col-span-4"><label class="field-label">行程／票券名稱</label><input data-item-field="trip_detail" class="field" value="${esc(i.trip_detail)}" placeholder="例：城市一日遊／景點門票"></div>
+      <div class="col-span-2 md:col-span-4"><label class="field-label">行程／票券名稱</label><input data-item-field="trip_detail" class="field" value="${esc(i.trip_detail)}" placeholder="例：巴士蒸汽火車＋企鵝歸巢"></div>
       <div><label class="field-label">每位單價 AUD</label><input data-item-field="unit_price_aud" type="number" step="0.01" class="field" value="${num(i.unit_price_aud)||''}"></div>
       <div><label class="field-label">加購／附加 AUD</label><input data-item-field="extra_amount_aud" type="number" step="0.01" class="field" value="${num(i.extra_amount_aud)||''}"></div>
       <div><label class="field-label">小計 AUD</label><input data-item-field="amount_aud" type="number" step="0.01" class="field" value="${num(i.amount_aud)||''}"></div>
-      <div class="agent-cost-block col-span-2 md:col-span-4 rounded-lg border border-amber-200 bg-amber-50/50 p-3"><div class="mb-2 text-xs font-black text-amber-800">代理項目與成本</div><div class="grid grid-cols-2 gap-2 md:grid-cols-4">
+      <div class="col-span-2 md:col-span-4 rounded-lg border border-amber-200 bg-amber-50/50 p-3"><div class="mb-2 text-xs font-black text-amber-800">代理項目與成本</div><div class="grid grid-cols-2 gap-2 md:grid-cols-4">
         <div><label class="field-label">成本代理</label><select data-item-field="cost_agent_id" class="field">${tourAgentOptions(i.cost_agent_id)}</select></div>
         <div class="col-span-1 md:col-span-3"><label class="field-label">成本項目</label><select data-item-field="cost_product_id" class="field">${tourProductOptions(i.cost_agent_id,i.cost_product_id)}</select></div>
         <div><label class="field-label">成人數</label><input data-item-field="adult_qty" type="number" min="0" class="field" value="${num(i.adult_qty)||''}"></div>
@@ -1095,16 +1114,16 @@ $('pax').addEventListener('input',()=>{orderItems.forEach(i=>{if(!i.pax||i.pax==
 $('agentName').addEventListener('change',()=>{if(syncBlankItemCostAgentsFromOrder(true))renderOrderItems();});
 $('agentName').addEventListener('blur',()=>{if(syncBlankItemCostAgentsFromOrder(true))renderOrderItems();});
 
-function resetOrder(){if($('fxRate'))$('fxRate').value=DEFAULT_ACCOUNTING_FX;
+function resetOrder(){
   $('orderForm').reset(); receipts=[newReceipt()]; $('editingId').value=''; $('orderNumber').value='儲存時自動產生'; $('formHeading').textContent='新增訂單'; $('orderStatusDisplay').value='有效';
-  $('orderDate').value=today(); $('pax').value=1; $('currency').value='AUD'; $('fxRate').value=DEFAULT_ACCOUNTING_FX; $('discountAud').value=0; accountingAmountManual=false; $('taxInclusive').value='true'; $('salesTaxType').value='unclassified'; $('receiptType').value='unpaid'; $('paymentCurrency').value='AUD'; $('paymentFxToAud').value=1; $('costTaxType').value='unclassified'; $('caseStatus').value='open'; $('rawOrderText').value=''; $('parseMessage').classList.add('hidden'); $('revenueRecognitionDate').value=today(); $('receivableDueDate').value=today(); $('payableDueDate').value=today(); renderReceiptRows();
+  $('orderDate').value=today(); $('pax').value=1; $('currency').value='AUD'; $('fxRate').value=23; $('discountAud').value=0; accountingAmountManual=false; $('taxInclusive').value='true'; $('salesTaxType').value='unclassified'; $('receiptType').value='unpaid'; $('paymentCurrency').value='AUD'; $('paymentFxToAud').value=1; $('costTaxType').value='unclassified'; $('caseStatus').value='open'; $('rawOrderText').value=''; $('parseMessage').classList.add('hidden'); $('revenueRecognitionDate').value=today(); $('receivableDueDate').value=today(); $('payableDueDate').value=today(); renderReceiptRows();
   orderItems=[newOrderItem({service_date:today()})]; renderOrderItems(); calculateFinancials();
 }
 $('resetOrderBtn').addEventListener('click',resetOrder);
 
 function newReceipt(v={}){
   const currency=v.currency||'AUD';
-  const rate=num(v.fx_to_aud)||(currency==='AUD'?1:currency==='TWD'?(num($('fxRate')?.value)||DEFAULT_ACCOUNTING_FX):4.75);
+  const rate=num(v.fx_to_aud)||(currency==='AUD'?1:currency==='TWD'?(num($('fxRate')?.value)||23):4.75);
   const actual=num(v.amount_foreign)||0, discount=num(v.discount_foreign)||0, expected=num(v.expected_amount_foreign)||(actual+discount);
   const autoAud=round2(actual/Math.max(.0001,rate)), autoDiscountAud=round2(discount/Math.max(.0001,rate));
   const storedAud=v.amount_aud===0?0:(num(v.amount_aud)||autoAud), storedDiscount=v.discount_aud===0?0:(num(v.discount_aud)||autoDiscountAud);
@@ -1176,7 +1195,7 @@ $('receiptRows').addEventListener('input',e=>{
   if(field==='amount_aud')receipts[i].amount_aud_manual=true;
   if(field==='discount_aud')receipts[i].discount_aud_manual=true;
   if(field==='currency'){
-    receipts[i].fx_to_aud=el.value==='AUD'?1:el.value==='TWD'?(num($('fxRate').value)||DEFAULT_ACCOUNTING_FX):4.75;
+    receipts[i].fx_to_aud=el.value==='AUD'?1:el.value==='TWD'?(num($('fxRate').value)||23):4.75;
     recalcReceiptAuto(receipts[i]);
     syncReceiptRowDom(i,el);
   } else if(['expected_amount_foreign','discount_foreign','amount_foreign'].includes(field)){
@@ -1206,7 +1225,7 @@ function calculateFinancials(){
   $('systemNetAmount').value=systemNetAud;
   $('accountingAdjustmentAud').value=accountingAdjustment;
   $('itemsTotalAud').textContent=moneyAud(grossAud);
-  const fx=Math.max(.0001,num($('fxRate').value)||DEFAULT_ACCOUNTING_FX), base=round2(totalAud*fx);
+  const fx=Math.max(.0001,num($('fxRate').value)||23), base=round2(totalAud*fx);
   const taxType=$('salesTaxType').value, inclusive=$('taxInclusive').value==='true';
   let ex=base,tax=0,total=base;
   if(taxType==='taxable'){
@@ -1237,7 +1256,7 @@ function collectItems(){ return orderItems.map((i,index)=>({id:i.id||'',line_no:
 function collectOrder(){
   const items=collectItems(), first=[...items].sort((a,b)=>a.service_date.localeCompare(b.service_date))[0]||{};
   return {
-    id:$('editingId').value||null,number_prefix:APP_CONFIG.orderNumberPrefix||'AU',mode:$('mode').value,category:items.length===1?items[0].category:'多行程',customer:$('customer').value.trim(),external_order_number:$('externalOrderNumber').value.trim(),agent_name:$('agentName').value.trim(),order_date:$('orderDate').value,departure_time:first.service_date||'',service_time:first.service_time||'',pax:num($('pax').value),note:$('note').value.trim(),special_info:$('specialInfo').value.trim(),contact_phone:$('contactPhone').value.trim(),contact_email:$('contactEmail').value.trim(),pickup_location:first.pickup_location||'',pickup_address:first.pickup_address||'',dropoff_address:first.dropoff_address||'',flight_info:first.ticket_info||'',
+    id:$('editingId').value||null,mode:$('mode').value,category:items.length===1?items[0].category:'多行程',customer:$('customer').value.trim(),external_order_number:$('externalOrderNumber').value.trim(),agent_name:$('agentName').value.trim(),order_date:$('orderDate').value,departure_time:first.service_date||'',service_time:first.service_time||'',pax:num($('pax').value),note:$('note').value.trim(),special_info:$('specialInfo').value.trim(),contact_phone:$('contactPhone').value.trim(),contact_email:$('contactEmail').value.trim(),pickup_location:first.pickup_location||'',pickup_address:first.pickup_address||'',dropoff_address:first.dropoff_address||'',flight_info:first.ticket_info||'',
     currency:'AUD',fx_rate:num($('fxRate').value),accounting_fx_twd_per_aud:num($('fxRate').value),unit_price:items.length===1?items[0].unit_price_aud:'',gross_amount_aud:num($('grossOrderAmount').value),discount_aud:num($('discountAud').value),amount:num($('systemNetAmount').value),accounting_amount_aud:num($('amount').value),sales_tax_type:$('salesTaxType').value,tax_inclusive:$('taxInclusive').value==='true',sales_ex_tax_twd:num($('salesExTaxTwd').value),output_tax_twd:num($('outputTaxTwd').value),sales_total_twd:num($('salesTotalTwd').value),revenue_recognition_date:$('revenueRecognitionDate').value,invoice_status:$('invoiceStatus').value,invoice_date:$('invoiceDate').value,invoice_number:$('invoiceNumber').value.trim(),buyer_tax_id:$('buyerTaxId').value.trim(),buyer_name:$('buyerName').value.trim(),
     receipt_type:$('receiptType').value,payment_currency:collectReceipts().length>1?'MIXED':(collectReceipts()[0]?.currency||'AUD'),payment_fx_to_aud:1,received_payment_amount:num($('receivedAmount').value),received_amount:num($('receivedAmount').value),received_twd:num($('receivedTwd').value),prepayment_amount:num($('prepaymentAmount').value),prepayment_twd:num($('prepaymentTwd').value),receipt_date:$('receiptDate').value,payment_method:'',receipt_account:'',receivable_due_date:$('receivableDueDate').value,
     supplier_name:$('supplierName').value.trim(),cost_tax_type:$('costTaxType').value,cost_ex_tax_twd:num($('costExTaxTwd').value),input_tax_twd:num($('inputTaxTwd').value),cost_total_twd:num($('costTotalTwd').value),paid_twd:num($('paidTwd').value),supplier_prepayment_twd:num($('supplierPrepaymentTwd').value),cost_document_type:$('costDocumentType').value,cost_document_number:$('costDocumentNumber').value.trim(),cost_document_date:$('costDocumentDate').value,cost_recognition_date:$('costRecognitionDate').value,payment_account:$('paymentAccount').value.trim(),payable_due_date:$('payableDueDate').value,payable_paid_date:$('payablePaidDate').value,
@@ -1247,7 +1266,7 @@ function collectOrder(){
 
 $('orderForm').addEventListener('submit',async e=>{
   e.preventDefault(); const payload=collectOrder(), items=collectItems(), receiptPayload=collectReceipts();
-  if(!payload.customer||!payload.order_date||!items.length||items.some(i=>!i.service_date)) return alert('請確認旅客姓名、接單日期與每筆行程日期。');
+  if(!payload.customer||!payload.order_date||!items.length||items.some(i=>!i.service_date)||payload.amount<=0) return alert('請確認旅客姓名、接單日期、每筆行程日期與訂單總額。');
   const invalidReceipt=receiptPayload.find(r=>round2(num(r.amount_aud)+num(r.discount_aud))<=0);
   if(invalidReceipt)return alert('每筆收款的「會計實收AUD＋會計優惠AUD」必須大於0；全額優惠時可填實收0、優惠大於0。');
   const btn=$('saveOrderBtn');btn.disabled=true;btn.textContent='寫入中...';
@@ -1283,7 +1302,7 @@ async function quickCloseOrder(id){
   catch(e){alert(`結案失敗：${e.message}`);}
 }
 async function deleteOrder(id){if(!confirm('確定刪除這筆訂單及全部行程明細？'))return;try{await api(`/rest/v1/orders?id=eq.${encodeURIComponent(id)}`,{method:'DELETE'});await loadAll();}catch(e){alert(`刪除失敗：${e.message}`);}}
-async function refundOrder(id){const o=allOrders.find(x=>x.id===id);if(!o)return;const amount=prompt(`退款金額（AUD），剩餘可退約 ${Math.max(0,accountingOrderAmount(o)-num(o.refund_total))}`);if(amount===null)return;const reason=prompt('退款原因');if(!reason)return;try{await api('/rest/v1/rpc/record_order_adjustment',{method:'POST',body:JSON.stringify({p_order_id:id,p_action_type:'refund',p_action_date:today(),p_amount:num(amount),p_reason:reason,p_note:''})});await loadAll();}catch(e){alert(`退款失敗：${e.message}`);}}
+async function refundOrder(id){const o=allOrders.find(x=>x.id===id);if(!o)return;const amount=prompt(`退款金額（AUD），剩餘可退約 ${Math.max(0,num(o.amount)-num(o.refund_total))}`);if(amount===null)return;const reason=prompt('退款原因');if(!reason)return;try{await api('/rest/v1/rpc/record_order_adjustment',{method:'POST',body:JSON.stringify({p_order_id:id,p_action_type:'refund',p_action_date:today(),p_amount:num(amount),p_reason:reason,p_note:''})});await loadAll();}catch(e){alert(`退款失敗：${e.message}`);}}
 async function cancelOrder(id){const o=allOrders.find(x=>x.id===id);if(!o||o.order_status==='cancelled')return alert('此訂單已取消。');const reason=prompt('取消原因');if(!reason)return;try{await api('/rest/v1/rpc/record_order_adjustment',{method:'POST',body:JSON.stringify({p_order_id:id,p_action_type:'cancel_trip',p_action_date:today(),p_amount:0,p_reason:reason,p_note:''})});await loadAll();}catch(e){alert(`取消失敗：${e.message}`);}}
 
 function getLabel(text,labels){const escaped=labels.map(x=>x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|');const m=String(text||'').match(new RegExp(`^(?:${escaped})\s*[：:]\s*(.*)$`,'mi'));return m?m[1].trim():'';}
@@ -1356,6 +1375,7 @@ function parseLineOrder(){
 
   const modeText=getLabel(masterRaw,['經營模式']);const parsedMode=modeFromText(modeText);if(parsedMode)$('mode').value=parsedMode;
   const agent=getLabel(masterRaw,['代理來源','代理','訂單來源','來源']);if(agent){$('agentName').value=agent;if(!parsedMode)$('mode').value='Mode_C';}
+  if(/來自\s*Gold Ocean Tour/i.test(raw)){$('agentName').value='Gold Ocean Tour';$('mode').value='Mode_C';}
   const ext=getLabel(masterRaw,['外部單號','訂單編號','訂單詳情']);if(ext)$('externalOrderNumber').value=(ext.match(/[A-Z0-9-]{6,}/i)||[ext])[0];
   const customer=getLabel(masterRaw,['旅客姓名','旅客','姓名','中英文姓名','主要聯繫人']);if(customer)$('customer').value=customer;
   const orderDate=normalizeDate(getLabel(masterRaw,['接單日期','下單日期']));if(orderDate)$('orderDate').value=orderDate;
@@ -1404,7 +1424,7 @@ function parseLineOrder(){
     const before=maxCurrencyAmount(raw,/([\d,.]+)\s*(?:台幣|TWD|NT\$)/gi);const after=maxCurrencyAmount(raw,/(?:台幣|TWD|NT\$)\s*([\d,.]+)/gi);const twd=Math.max(before,after);
     $('receivedPaymentAmount').value=twd||'';
     const rateExpr=raw.match(/[\d,.]+\s*[x×*]\s*([\d.]+)\s*=\s*[\d,.]+\s*(?:台幣|TWD|NT\$)/i);const rateText=raw.match(/(?:匯率|汇率)[^\d]*([\d.]+)\s*(?:TWD|台幣)?\s*\/\s*AUD/i);
-    $('paymentFxToAud').value=rateExpr?rateExpr[1]:rateText?rateText[1]:(num($('fxRate').value)||DEFAULT_ACCOUNTING_FX);if(!parsedReceipt)$('receiptType').value=twd?'full':'unpaid';
+    $('paymentFxToAud').value=rateExpr?rateExpr[1]:rateText?rateText[1]:(num($('fxRate').value)||23);if(!parsedReceipt)$('receiptType').value=twd?'full':'unpaid';
   }else if(/澳幣|澳币|AUD/i.test(raw)&&(/支付|付款/.test(raw)||parsedReceipt==='full'||parsedReceipt==='partial'||parsedReceipt==='prepayment')){
     $('paymentCurrency').value='AUD';$('paymentFxToAud').value=1;
     const audPaid=Math.max(maxCurrencyAmount(raw,/([\d,.]+)\s*(?:澳幣|澳币|AUD)/gi),maxCurrencyAmount(raw,/(?:澳幣|澳币|AUD)\s*([\d,.]+)/gi));
@@ -1415,7 +1435,7 @@ function parseLineOrder(){
   if(num($('receivedPaymentAmount').value)>0){receipts=[newReceipt({receipt_date:$('receiptDate').value||today(),currency:$('paymentCurrency').value||'AUD',fx_to_aud:num($('paymentFxToAud').value)||1,amount_foreign:num($('receivedPaymentAmount').value),payment_method:$('paymentMethod').value||'',receipt_account:$('receiptAccount').value||'',note:'由LINE文字解析'})];renderReceiptRows();}
   renderOrderItems();calculateFinancials();
   $('parseMessage').className=`mt-2 rounded-lg p-2 text-xs ${warnings.length?'bg-amber-100 text-amber-800':'bg-emerald-100 text-emerald-800'}`;
-  const prefix=structuredBlocks.length?`V6.0 已解析 ${structuredBlocks.length} 筆行程明細`:'V6.0 已完成解析';
+  const prefix=structuredBlocks.length?`V5.2.2 已解析 ${structuredBlocks.length} 筆行程明細`:'V5.2.2 已完成解析';
   $('parseMessage').textContent=warnings.length?`${prefix}，請確認：${warnings.join('、')}`:`${prefix}，請核對每筆日期、小計、成本代理／項目與收款匯率；司機請於出車單指定。`;
   $('parseMessage').classList.remove('hidden');
 }
@@ -1436,7 +1456,7 @@ function calculateDispatchTotal(){const aud=num($('dispatchDriverCost').value)+n
 $('dispatchDriverId').addEventListener('change',()=>{const d=drivers.find(x=>x.id===$('dispatchDriverId').value);if(d){$('dispatchVehiclePlate').value=d.vehicle_plate||'';$('dispatchVehicleType').value=d.vehicle_type||'';}});
 $('dispatchDate').addEventListener('change',renderDispatchItemChoices);$('dispatchShowAll').addEventListener('change',renderDispatchItemChoices);$('dispatchItemSearch').addEventListener('input',renderDispatchItemChoices);
 function renderDispatchItemChoices(){if(!$('dispatchItemChoices'))return;const date=$('dispatchDate').value,showAll=$('dispatchShowAll').checked,search=$('dispatchItemSearch').value.trim().toLowerCase();const rows=allOrderItems.filter(i=>{const o=allOrders.find(x=>x.id===i.order_id);if(!o||o.order_status==='cancelled')return false;if(!showAll&&date&&i.service_date!==date)return false;const hay=[o.order_number,o.customer,i.trip_detail,i.category,i.ticket_info].join(' ').toLowerCase();return !search||hay.includes(search);});$('dispatchItemChoices').innerHTML=rows.length?rows.map(i=>{const o=allOrders.find(x=>x.id===i.order_id);const checked=selectedDispatchItemIds.has(i.id);const prior=dispatchLinks.filter(l=>l.order_item_id===i.id).map(l=>allDispatches.find(d=>d.id===l.dispatch_id)).filter(Boolean);return`<label class="flex cursor-pointer items-start gap-2 rounded-lg border p-2 ${checked?'border-violet-400 bg-violet-50':'border-slate-200'}"><input data-dispatch-item="${i.id}" type="checkbox" class="mt-1" ${checked?'checked':''}><span class="min-w-0"><b>${esc(i.service_date)}｜${esc(o.customer)}｜${esc(i.category)}</b>${prior.length?`<span class="ml-2 text-[10px] text-amber-700">已有：${prior.map(d=>esc(d.dispatch_number)).join('、')}</span>`:''}<div class="truncate text-[11px] text-slate-500">${esc(o.order_number)}｜${esc(i.trip_detail||i.ticket_info||'-')}｜${moneyAud(i.amount_aud)}</div></span></label>`;}).join(''):'<div class="p-4 text-center text-xs text-slate-500">此日期沒有可選的訂單／門票</div>';document.querySelectorAll('[data-dispatch-item]').forEach(c=>c.addEventListener('change',()=>{if(c.checked)selectedDispatchItemIds.add(c.dataset.dispatchItem);else selectedDispatchItemIds.delete(c.dataset.dispatchItem);renderDispatchItemChoices();}));}
-$('dispatchForm').addEventListener('submit',async e=>{e.preventDefault();if(!$('dispatchDriverId').value)return alert('請選擇司機。');if(!selectedDispatchItemIds.size)return alert('請至少選擇一筆訂單或門票明細。');const body={id:$('dispatchEditId').value||null,number_prefix:APP_CONFIG.dispatchNumberPrefix||'DS',dispatch_date:$('dispatchDate').value,start_time:$('dispatchStartTime').value,driver_id:$('dispatchDriverId').value,vehicle_plate:$('dispatchVehiclePlate').value.trim(),vehicle_type:$('dispatchVehicleType').value.trim(),dispatch_cost_aud:0,driver_cost_aud:num($('dispatchDriverCost').value),fuel_cost_aud:num($('dispatchFuelCost').value),ticket_cost_aud:num($('dispatchTicketCost').value),other_cost_aud:num($('dispatchOtherCost').value),accounting_fx_twd_per_aud:DEFAULT_ACCOUNTING_FX,payment_status:$('dispatchPaymentStatus').value,paid_date:$('dispatchPaidDate').value,note:$('dispatchNote').value.trim()};const btn=$('saveDispatchBtn');btn.disabled=true;btn.textContent='寫入中...';try{const r=await api('/rest/v1/rpc/save_dispatch_v2',{method:'POST',body:JSON.stringify({p_dispatch:body,p_order_item_ids:[...selectedDispatchItemIds]})});alert(`出車單已${r.updated?'更新':'建立'}：${r.dispatchNumber}`);resetDispatch();await loadAll();}catch(e){alert(`出車單儲存失敗：${e.message}`);}finally{btn.disabled=false;btn.textContent='儲存出車單';}});
+$('dispatchForm').addEventListener('submit',async e=>{e.preventDefault();if(!$('dispatchDriverId').value)return alert('請選擇司機。');if(!selectedDispatchItemIds.size)return alert('請至少選擇一筆訂單或門票明細。');const body={id:$('dispatchEditId').value||null,dispatch_date:$('dispatchDate').value,start_time:$('dispatchStartTime').value,driver_id:$('dispatchDriverId').value,vehicle_plate:$('dispatchVehiclePlate').value.trim(),vehicle_type:$('dispatchVehicleType').value.trim(),dispatch_cost_aud:0,driver_cost_aud:num($('dispatchDriverCost').value),fuel_cost_aud:num($('dispatchFuelCost').value),ticket_cost_aud:num($('dispatchTicketCost').value),other_cost_aud:num($('dispatchOtherCost').value),accounting_fx_twd_per_aud:23,payment_status:$('dispatchPaymentStatus').value,paid_date:$('dispatchPaidDate').value,note:$('dispatchNote').value.trim()};const btn=$('saveDispatchBtn');btn.disabled=true;btn.textContent='寫入中...';try{const r=await api('/rest/v1/rpc/save_dispatch_v2',{method:'POST',body:JSON.stringify({p_dispatch:body,p_order_item_ids:[...selectedDispatchItemIds]})});alert(`出車單已${r.updated?'更新':'建立'}：${r.dispatchNumber}`);resetDispatch();await loadAll();}catch(e){alert(`出車單儲存失敗：${e.message}`);}finally{btn.disabled=false;btn.textContent='儲存出車單';}});
 function dispatchItemsFor(id){return dispatchLinks.filter(l=>l.dispatch_id===id).map(l=>allOrderItems.find(i=>i.id===l.order_item_id)).filter(Boolean);}
 function renderDispatchList(){if(!$('dispatchListBody'))return;$('dispatchEmpty').classList.toggle('hidden',allDispatches.length>0);$('dispatchListBody').innerHTML=allDispatches.map(d=>{const items=dispatchItemsFor(d.id);return`<tr class="border-t border-slate-100 align-top"><td class="p-3 font-bold text-violet-700">${esc(d.dispatch_number)}</td><td class="p-3"><b>${esc(d.dispatch_date)} ${esc((d.start_time||'').slice(0,5))}</b><div class="text-[11px]">${esc(driverName(d.driver_id)||'-')}／${esc(d.vehicle_plate||'')}</div></td><td class="p-3">${items.map(i=>{const o=allOrders.find(x=>x.id===i.order_id);return`<div class="mb-1 rounded bg-slate-50 p-1.5"><b>${esc(o?.customer||'-')}</b>｜${esc(i.category)}<div class="text-[11px]">${esc(o?.order_number||'-')}｜${esc(i.trip_detail||i.ticket_info||'-')}</div></div>`;}).join('')}</td><td class="p-3 text-right"><b>${moneyAud(d.total_cost_aud)}</b><div class="text-[11px] text-slate-500">司機 ${moneyAud(d.driver_cost_aud)}／油錢 ${moneyAud(d.fuel_cost_aud)}／門票 ${moneyAud(d.ticket_cost_aud)}／其他 ${moneyAud(d.other_cost_aud)}</div></td><td class="p-3">${d.payment_status==='paid'?'已付款':'未付款'}<div class="text-[11px]">${esc(d.paid_date||'')}</div></td><td class="p-3">${esc(d.note||'')}</td><td class="p-3 text-right"><button data-dispatch-edit="${d.id}" class="rounded bg-blue-50 px-2 py-1 font-bold text-blue-700">編輯</button> <button data-dispatch-delete="${d.id}" class="rounded bg-red-50 px-2 py-1 font-bold text-red-700">刪除</button></td></tr>`;}).join('');document.querySelectorAll('[data-dispatch-edit]').forEach(b=>b.addEventListener('click',()=>editDispatch(b.dataset.dispatchEdit)));document.querySelectorAll('[data-dispatch-delete]').forEach(b=>b.addEventListener('click',async()=>{if(!confirm('刪除此出車單？'))return;try{await api(`/rest/v1/dispatches?id=eq.${b.dataset.dispatchDelete}`,{method:'DELETE'});await loadAll();}catch(e){alert(e.message);}}));}
 function editDispatch(id){const d=allDispatches.find(x=>x.id===id);if(!d)return;setTab('dispatch');$('dispatchEditId').value=d.id;$('dispatchHeading').textContent=`編輯 ${d.dispatch_number}`;$('dispatchDate').value=d.dispatch_date;$('dispatchStartTime').value=(d.start_time||'').slice(0,5);$('dispatchDriverId').value=d.driver_id;$('dispatchVehiclePlate').value=d.vehicle_plate;$('dispatchVehicleType').value=d.vehicle_type;$('dispatchDriverCost').value=d.driver_cost_aud;$('dispatchFuelCost').value=d.fuel_cost_aud;$('dispatchTicketCost').value=d.ticket_cost_aud||0;$('dispatchOtherCost').value=d.other_cost_aud;$('dispatchPaymentStatus').value=d.payment_status;$('dispatchPaidDate').value=d.paid_date||'';$('dispatchNote').value=d.note;selectedDispatchItemIds=new Set(dispatchLinks.filter(l=>l.dispatch_id===id).map(l=>l.order_item_id));renderDispatchItemChoices();calculateDispatchTotal();window.scrollTo({top:0,behavior:'smooth'});}
@@ -1461,7 +1481,7 @@ $('resetTourCostBtn').addEventListener('click',resetTourCostForm);
 $('tourCostSearch').addEventListener('input',renderTourCostList);$('tourCostAgentFilter').addEventListener('change',renderTourCostList);
 $('addAgentBtn').addEventListener('click',async()=>{const name=prompt('新增代理名稱');if(!name?.trim())return;try{await api('/rest/v1/tour_agents',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({name:name.trim(),created_by:currentUser.id,updated_by:currentUser.id})});await loadAll();$('tourProductAgent').value=tourAgents.find(a=>a.name===name.trim())?.id||'';}catch(e){alert(`新增代理失敗：${e.message}`);}});
 
-const reportDefs=[['401','401試算'],['receipts','收款明細'],['prepayment','預收報表'],['payable','應付報表'],['pnl','損益表'],['balance','資產負債表'],['cashflow','現金流量表']].filter(([k])=>k!=='401'||APP_CONFIG.enable401!==false);
+const reportDefs=[['401','401試算'],['receipts','收款明細'],['prepayment','預收報表'],['payable','應付報表'],['pnl','損益表'],['balance','資產負債表'],['cashflow','現金流量表']];
 function renderReportButtons(){ $('reportButtons').innerHTML=reportDefs.map(([k,n])=>`<button data-report="${k}" class="reportBtn h-[42px] shrink-0 whitespace-nowrap rounded-lg px-3 text-xs font-bold ${activeReport===k?'bg-blue-600 text-white':'bg-slate-100 text-slate-700'}">${n}</button>`).join(''); const isPrepayment=activeReport==='prepayment'; $('prepaymentModeFilterWrap').classList.toggle('hidden',!isPrepayment); $('prepaymentAgentFilterWrap').classList.toggle('hidden',!isPrepayment); document.querySelectorAll('.reportBtn').forEach(b=>b.addEventListener('click',()=>{activeReport=b.dataset.report;renderReportButtons();renderReport();})); }
 renderReportButtons();
 function reportRange(){ return {start:$('reportStartDate').value,end:$('reportEndDate').value}; }
@@ -1470,16 +1490,16 @@ function summaryCards(items){ return `<div class="mb-5 grid grid-cols-2 gap-3 md
 function simpleTable(headers,rows){ return `<div class="overflow-auto rounded-xl border border-slate-200"><table class="w-full min-w-[850px] text-xs"><thead class="bg-slate-50"><tr>${headers.map(h=>`<th class="p-3 text-left">${h}</th>`).join('')}</tr></thead><tbody>${rows.length?rows.map(r=>`<tr class="border-t border-slate-100">${r.map((c,i)=>`<td class="p-3 ${i>2?'text-right':''}">${c}</td>`).join('')}</tr>`).join(''):`<tr><td colspan="${headers.length}" class="p-8 text-center text-slate-500">本期間沒有資料</td></tr>`}</tbody></table></div>`; }
 
 function orderSalesExTaxAud(o){
-  const fx=Math.max(.0001,num(o.accounting_fx_twd_per_aud||o.fx_rate)||DEFAULT_ACCOUNTING_FX);
+  const fx=Math.max(.0001,num(o.accounting_fx_twd_per_aud||o.fx_rate)||23);
   return num(o.sales_ex_tax_twd)?round2(num(o.sales_ex_tax_twd)/fx):accountingOrderAmount(o);
 }
 function orderAccountingAdjustmentAud(o){return round2(accountingOrderAmount(o)-num(o.amount));}
 
-function orderOutputTaxAud(o){ const fx=Math.max(.0001,num(o.accounting_fx_twd_per_aud||o.fx_rate)||DEFAULT_ACCOUNTING_FX); return round2(num(o.output_tax_twd)/fx); }
+function orderOutputTaxAud(o){ const fx=Math.max(.0001,num(o.accounting_fx_twd_per_aud||o.fx_rate)||23); return round2(num(o.output_tax_twd)/fx); }
 function orderGrossAud(o){return num(o.gross_amount_aud)||num(o.amount)+num(o.discount_aud);}
 function orderDiscountAud(o){return Math.max(0,num(o.discount_aud));}
-function financeExTaxAud(e){ const fx=Math.max(.0001,num(e.fx_twd_per_aud)||DEFAULT_ACCOUNTING_FX); return num(e.amount_ex_tax_twd)?round2(num(e.amount_ex_tax_twd)/fx):financeAud(e); }
-function financeTaxAud(e){ const fx=Math.max(.0001,num(e.fx_twd_per_aud)||DEFAULT_ACCOUNTING_FX); return round2(num(e.tax_twd)/fx); }
+function financeExTaxAud(e){ const fx=Math.max(.0001,num(e.fx_twd_per_aud)||23); return num(e.amount_ex_tax_twd)?round2(num(e.amount_ex_tax_twd)/fx):financeAud(e); }
+function financeTaxAud(e){ const fx=Math.max(.0001,num(e.fx_twd_per_aud)||23); return round2(num(e.tax_twd)/fx); }
 
 function calcPnl(start,end){
   const rows=allOrders.filter(o=>o.order_status!=='cancelled' && dateInRange(o.revenue_recognition_date||o.departure_time,start,end));
@@ -1534,7 +1554,7 @@ function syncPrepaymentAgentOptions(rows){
 function renderPrepayment(start,end){
   const cutoff=end||today();
   const selectedMode=$('prepaymentModeFilter')?.value??'ALL';
-  const modeOrders=allOrders.filter(o=>o.order_status!=='cancelled'&&dateInRange(o.order_date,start,end)&&(selectedMode==='ALL'||(o.mode||'')===selectedMode));
+  const modeOrders=allOrders.filter(o=>o.order_status!=='cancelled'&&(selectedMode==='ALL'||(o.mode||'')===selectedMode));
   const modeDetails=modeOrders.map(o=>{
     const receipts=orderReceipts.filter(r=>r.order_id===o.id&&(!cutoff||r.receipt_date<=cutoff));
     const received=round2(receipts.reduce((sum,r)=>sum+num(r.amount_aud),0));
@@ -1567,8 +1587,8 @@ function renderPrepayment(start,end){
     };
   }).filter(g=>g.rows.length);
 
-  const agentGroups=[...new Set(details.map(x=>x.agentName))].sort((a,b)=>a.localeCompare(b,'zh-Hant')).map(agentName=>{
-    const rows=details.filter(x=>x.agentName===agentName);
+  const agentGroups=[...new Set(modeDetails.map(x=>x.agentName))].sort((a,b)=>a.localeCompare(b,'zh-Hant')).map(agentName=>{
+    const rows=modeDetails.filter(x=>x.agentName===agentName);
     return {agentName,rows,
       orders:rows.length,
       received:round2(rows.reduce((sum,x)=>sum+x.received,0)),
@@ -1602,7 +1622,7 @@ function renderPrepayment(start,end){
 
   const selectedModeName=selectedMode==='ALL'?'全部經營模式':reportModeName(selectedMode);
   const selectedAgentName=selectedAgent==='ALL'?'全部代理／來源':selectedAgent;
-  return reportTitle('預收與未結案收款報表（AUD）',`截至 ${cutoff}；經營模式：${selectedModeName}；代理／來源：${selectedAgentName}；日期區間依接單日期篩選，金額以結束日為截至日。`)+
+  return reportTitle('預收與未結案收款報表（AUD）',`截至 ${cutoff}；經營模式：${selectedModeName}；代理／來源：${selectedAgentName}。代理小計依目前經營模式計算，訂單明細則依代理篩選。`)+
     summaryCards([
       ['截至日已收款',moneyAud(totalReceived),'text-emerald-700'],
       ['未結案已收款',moneyAud(totalUnclosedReceived),'text-blue-700'],
@@ -1618,8 +1638,8 @@ function renderPrepayment(start,end){
 }
 
 function renderPayable(start,end){
-  const dispatchRows=allDispatches.filter(d=>d.payment_status!=='paid'&&dateInRange(d.dispatch_date,start,end)).map(d=>({type:'出車',ref:d.dispatch_number,supplier:driverName(d.driver_id)||'-',date:d.dispatch_date,detail:`司機 ${moneyAud(d.driver_cost_aud)}／油錢 ${moneyAud(d.fuel_cost_aud)}／門票 ${moneyAud(d.ticket_cost_aud)}／其他 ${moneyAud(d.other_cost_aud)}`,amount:num(d.total_cost_aud)}));
-  const tourRows=allOrderItems.filter(i=>i.cost_payment_status!=='paid'&&num(i.actual_cost_aud)>0&&dateInRange(i.service_date,start,end)).map(i=>{const o=allOrders.find(x=>x.id===i.order_id)||{};return {type:'旅遊項目',ref:o.order_number||i.order_id,supplier:tourAgentName(i.cost_agent_id)||o.agent_name||'-',date:i.service_date,detail:i.trip_detail||tourProductById(i.cost_product_id)?.product_name||'-',amount:num(i.actual_cost_aud)};});
+  const dispatchRows=allDispatches.filter(d=>d.payment_status!=='paid'&&(!end||d.dispatch_date<=end)).map(d=>({type:'出車',ref:d.dispatch_number,supplier:driverName(d.driver_id)||'-',date:d.dispatch_date,detail:`司機 ${moneyAud(d.driver_cost_aud)}／油錢 ${moneyAud(d.fuel_cost_aud)}／門票 ${moneyAud(d.ticket_cost_aud)}／其他 ${moneyAud(d.other_cost_aud)}`,amount:num(d.total_cost_aud)}));
+  const tourRows=allOrderItems.filter(i=>i.cost_payment_status!=='paid'&&num(i.actual_cost_aud)>0&&(!end||i.service_date<=end)).map(i=>{const o=allOrders.find(x=>x.id===i.order_id)||{};return {type:'旅遊項目',ref:o.order_number||i.order_id,supplier:tourAgentName(i.cost_agent_id)||o.agent_name||'-',date:i.service_date,detail:i.trip_detail||tourProductById(i.cost_product_id)?.product_name||'-',amount:num(i.actual_cost_aud)};});
   const rows=[...dispatchRows,...tourRows].sort((a,b)=>a.date.localeCompare(b.date));
   const total=rows.reduce((s,r)=>s+r.amount,0),overdue=rows.filter(r=>r.date<today()).length;
 
@@ -1709,14 +1729,13 @@ $('financeType').innerHTML=Object.entries(financeTypes).map(([k,v])=>`<option va
 function updateFinanceMapping(){const v=financeTypes[$('financeType').value];$('financeMapping').textContent=`現金方向：${v[1]}；現金流分類：${v[2]}`;}
 $('financeType').addEventListener('change',updateFinanceMapping); updateFinanceMapping(); $('financeDate').value=today();
 $('financeForm').addEventListener('submit',async e=>{
-  e.preventDefault(); const type=$('financeType').value, map=financeTypes[type]; const body={entry_date:$('financeDate').value,entry_type:type,amount_aud:num($('financeAmount').value),amount_twd:round2(num($('financeAmount').value)*DEFAULT_ACCOUNTING_FX),fx_twd_per_aud:DEFAULT_ACCOUNTING_FX,direction:map[1],cash_flow_section:map[2],account_name:$('financeAccount').value.trim(),counterparty:$('financeCounterparty').value.trim(),document_number:$('financeDocument').value.trim(),tax_type:$('financeTaxType').value,amount_ex_tax_twd:num($('financeExTaxTwd').value),tax_twd:num($('financeTaxTwd').value),note:$('financeNote').value.trim(),created_by:currentUser.id,updated_by:currentUser.id};
+  e.preventDefault(); const type=$('financeType').value, map=financeTypes[type]; const body={entry_date:$('financeDate').value,entry_type:type,amount_aud:num($('financeAmount').value),amount_twd:round2(num($('financeAmount').value)*23),fx_twd_per_aud:23,direction:map[1],cash_flow_section:map[2],account_name:$('financeAccount').value.trim(),counterparty:$('financeCounterparty').value.trim(),document_number:$('financeDocument').value.trim(),note:$('financeNote').value.trim(),created_by:currentUser.id,updated_by:currentUser.id};
   try{await api('/rest/v1/finance_entries',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(body)});$('financeForm').reset();$('financeDate').value=today();updateFinanceMapping();await loadAll();}catch(e){alert(`儲存失敗：${e.message}`);}
 });
 function renderFinanceList(){ $('financeListBody').innerHTML=financeEntries.map(e=>`<tr class="border-t border-slate-100"><td class="p-3">${esc(e.entry_date)}</td><td class="p-3 font-bold">${esc(financeTypes[e.entry_type]?.[0]||e.entry_type)}</td><td class="p-3">${esc(e.account_name||'-')}<div class="text-[11px] text-slate-500">${esc(e.counterparty||'')}</div></td><td class="p-3 text-right font-bold ${e.direction==='inflow'?'text-emerald-700':e.direction==='outflow'?'text-red-700':''}">${moneyAud(financeAud(e))}</td><td class="p-3">${esc(e.cash_flow_section)}／${esc(e.direction)}</td><td class="p-3">${esc(e.note||'')}</td><td class="p-3 text-right"><button data-fin-del="${e.id}" class="finDelete rounded bg-red-50 px-2 py-1 font-bold text-red-700">刪除</button></td></tr>`).join(''); document.querySelectorAll('.finDelete').forEach(b=>b.addEventListener('click',async()=>{if(!confirm('刪除這筆其他帳務？'))return;try{await api(`/rest/v1/finance_entries?id=eq.${b.dataset.finDel}`,{method:'DELETE'});await loadAll();}catch(e){alert(e.message);}})); }
 
 const monthStart=new Date(); monthStart.setDate(1); $('reportStartDate').value=monthStart.toISOString().slice(0,10); $('reportEndDate').value=today();
 resetOrder(); resetDispatch(); renderReport(); setTab('orders');
-console.info('Travel Management & Accounting System V6.0 Clean Deployment');
 </script>
 </body>
 </html>

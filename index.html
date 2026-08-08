@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>澳洲旅遊訂單、司機名冊與出車系統 V6.0.1</title>
+<title>澳洲旅遊訂單、司機名冊與出車系統 V6.0.2</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -62,10 +62,10 @@
 <div class="mx-auto flex max-w-[1800px] flex-wrap items-center justify-between gap-3 px-4 py-3">
 <div>
 <div class="flex flex-wrap items-center gap-2">
-<h1 class="text-xl font-black" id="mainSystemTitle">澳洲旅遊訂單、司機名冊與出車系統 V6.0.1</h1>
+<h1 class="text-xl font-black" id="mainSystemTitle">澳洲旅遊訂單、司機名冊與出車系統 V6.0.2</h1>
 <button class="no-print rounded-lg bg-slate-100 px-2 py-1 text-[11px] font-bold text-slate-600 hover:bg-slate-200" id="editCompanyNameBtn" type="button" title="自訂左上角顯示公司名稱">✎ 公司名稱</button>
 </div>
-<p class="text-xs font-bold text-emerald-600" id="statusText">登入中...</p><p class="text-[10px] font-bold text-blue-600" id="versionText">Core V6.0.1｜DB 檢查中</p>
+<p class="text-xs font-bold text-emerald-600" id="statusText">登入中...</p><p class="text-[10px] font-bold text-blue-600" id="versionText">Core V6.0.2｜DB 檢查中</p>
 </div>
 <div class="flex flex-wrap items-center gap-2">
 
@@ -397,7 +397,7 @@
 
 <script src="./config.js"></script>
 <script>
-const APP_VERSION = '6.0.1';
+const APP_VERSION = '6.0.2';
 const CORE_API_VERSION = '6.0';
 const APP_CONFIG = window.APP_CONFIG || {};
 const SUPABASE_URL = String(APP_CONFIG.supabaseUrl || '').replace(/\/$/, '');
@@ -499,8 +499,9 @@ const $ = id => document.getElementById(id);
 const defaultCompanyName = String(APP_CONFIG.companyName || '旅遊管理系統').trim() || '旅遊管理系統';
 const systemName = String(APP_CONFIG.systemName || '旅遊訂單、司機名冊與出車系統');
 const COMPANY_NAME_STORAGE_KEY = `travel_display_company_${INSTANCE_ID}`;
+let sharedCompanyName = '';
 function displayCompanyName(){
-  return (localStorage.getItem(COMPANY_NAME_STORAGE_KEY)||'').trim() || defaultCompanyName;
+  return sharedCompanyName.trim() || (localStorage.getItem(COMPANY_NAME_STORAGE_KEY)||'').trim() || defaultCompanyName;
 }
 function renderBranding(){
   const companyName=displayCompanyName();
@@ -508,19 +509,51 @@ function renderBranding(){
   if($('loginSystemTitle')) $('loginSystemTitle').textContent = `${companyName}｜旅遊訂單與會計系統`;
   if($('mainSystemTitle')) $('mainSystemTitle').textContent = `${companyName}｜${systemName} V${APP_VERSION}`;
 }
+async function loadPublicCompanyName(){
+  try{
+    const res=await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_app_settings`,{
+      method:'POST',
+      headers:{apikey:SUPABASE_KEY,'Content-Type':'application/json'},
+      body:'{}'
+    });
+    if(!res.ok) return null;
+    const info=await res.json();
+    sharedCompanyName=String(info?.companyName||'').trim();
+    renderBranding();
+    return info;
+  }catch(e){ console.warn('load public company name failed',e); return null; }
+}
 function applyAppConfig(){
   renderBranding();
   const map={tourcosts:'tourCosts',drivers:'drivers',dispatch:'dispatch',reports:'reports',finance:'finance',users:'userManagement'};
   document.querySelectorAll('.mainTab').forEach(btn=>{const key=map[btn.dataset.tab];if(key && FEATURES[key]===false) btn.classList.add('hidden');});
 }
-function editDisplayCompanyName(){
+async function migrateLegacyCompanyNameIfNeeded(){
+  if(currentRole!=='admin') return;
+  const legacy=(localStorage.getItem(COMPANY_NAME_STORAGE_KEY)||'').trim();
+  if(!sharedCompanyName && legacy && legacy!==defaultCompanyName){
+    try{
+      const result=await api('/rest/v1/rpc/set_app_company_name',{method:'POST',body:JSON.stringify({p_company_name:legacy})});
+      sharedCompanyName=String(result?.companyName||legacy).trim();
+      localStorage.removeItem(COMPANY_NAME_STORAGE_KEY);
+      renderBranding();
+    }catch(e){ console.warn('company name migration failed',e); }
+  }else if(sharedCompanyName && legacy){
+    localStorage.removeItem(COMPANY_NAME_STORAGE_KEY);
+  }
+}
+async function editDisplayCompanyName(){
+  if(currentRole!=='admin') return alert('只有管理員可以修改全公司共用名稱。');
   const current=displayCompanyName();
-  const value=prompt('請輸入左上角要顯示的公司名稱：\n\n留空後按確定，可恢復 config.js 的預設名稱。',current);
+  const value=prompt('請輸入全公司共用的公司名稱：\n\n修改後電腦、手機與所有登入帳號都會同步。\n留空後按確定，可恢復 config.js 的預設名稱。',current);
   if(value===null) return;
   const name=value.trim();
-  if(name) localStorage.setItem(COMPANY_NAME_STORAGE_KEY,name);
-  else localStorage.removeItem(COMPANY_NAME_STORAGE_KEY);
-  renderBranding();
+  try{
+    const result=await api('/rest/v1/rpc/set_app_company_name',{method:'POST',body:JSON.stringify({p_company_name:name})});
+    sharedCompanyName=String(result?.companyName||'').trim();
+    localStorage.removeItem(COMPANY_NAME_STORAGE_KEY);
+    renderBranding();
+  }catch(e){ alert(`公司名稱儲存失敗：${e.message}`); }
 }
 $('editCompanyNameBtn')?.addEventListener('click',editDisplayCompanyName);
 function versionParts(v){return String(v||'').split('.').map(x=>Number(x)||0);}
@@ -538,6 +571,7 @@ async function checkSchemaVersion(){
   return info;
 }
 applyAppConfig();
+loadPublicCompanyName();
 const num = v => Number(v || 0);
 const round2 = v => Math.round((num(v) + Number.EPSILON) * 100) / 100;
 const money = v => `A$${round2(v).toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
@@ -635,11 +669,14 @@ async function handleSession(session) {
     return;
   }
   await checkSchemaVersion();
+  currentRole = status.role || '';
+  await loadPublicCompanyName();
+  await migrateLegacyCompanyNameIfNeeded();
   $('loginScreen').classList.add('hidden');
   $('app').classList.remove('hidden');
-  currentRole = status.role || '';
   $('statusText').textContent = `已登入：${session.user.email}（${status.role}）`;
   $('adminUsersTab').classList.toggle('hidden', currentRole !== 'admin' || FEATURES.userManagement===false);
+  $('editCompanyNameBtn')?.classList.toggle('hidden', currentRole !== 'admin');
   await loadAll();
 }
 
